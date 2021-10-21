@@ -5,9 +5,9 @@ package com.pi4j.example;
  * **********************************************************************
  * ORGANIZATION  :  Pi4J
  * PROJECT       :  Pi4J :: EXAMPLE  :: Sample Code
- * FILENAME      :  MinimalExample.java
+ * FILENAME      :  DigitalInputOutput.java
  *
- * This file is part of the Pi4J project. More information about
+ * This file is based on the Pi4J project. More information about
  * this project can be found here:  https://pi4j.com/
  * **********************************************************************
  * %%
@@ -28,22 +28,22 @@ package com.pi4j.example;
  */
 
 import com.pi4j.Pi4J;
+import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalInput;
+import com.pi4j.io.gpio.digital.DigitalInputConfigBuilder;
 import com.pi4j.io.gpio.digital.DigitalOutput;
+import com.pi4j.io.gpio.digital.DigitalOutputConfigBuilder;
 import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.gpio.digital.PullResistance;
 import com.pi4j.util.Console;
 
 /**
  * <p>This example fully describes the base usage of Pi4J by providing extensive comments in each step.</p>
- *
- * @author Frank Delporte (<a href="https://www.webtechie.be">https://www.webtechie.be</a>)
- * @version $Id: $Id
  */
-public class MinimalExample {
+public class DigitalInputOutputGPIO {
 
-    private static final int PIN_BUTTON = 24; // PIN 18 = BCM 24
-    private static final int PIN_LED = 22; // PIN 15 = BCM 22
+    private static final int PIN_BUTTON = 21; // PIN 40 = BCM 21
+    private static final int PIN_LED = 6; // PIN 31 = BCM 6
 
     private static int pressCount = 0;
 
@@ -57,7 +57,7 @@ public class MinimalExample {
     public static void main(String[] args) throws Exception {
         // Create Pi4J console wrapper/helper
         // (This is a utility class to abstract some of the boilerplate stdin/stdout code)
-        final var console = new Console();
+        final Console console = new Console();
 
         // Print program title/header
         console.title("<-- The Pi4J Project -->", "Minimal Example project");
@@ -88,7 +88,7 @@ public class MinimalExample {
         // method will automatically load all available Pi4J
         // extensions found in the application's classpath which
         // may include 'Platforms' and 'I/O Providers'
-        var pi4j = Pi4J.newAutoContext();
+        Context pi4j = Pi4J.newAutoContext();
 
         // ------------------------------------------------------------
         // Output Pi4J Context information
@@ -105,23 +105,23 @@ public class MinimalExample {
         // Here we will create I/O interfaces for a (GPIO) digital output
         // and input pin. We define the 'provider' to use PiGpio to control
         // the GPIO.
-        var ledConfig = DigitalOutput.newConfigBuilder(pi4j)
+        DigitalOutputConfigBuilder ledConfig = DigitalOutput.newConfigBuilder(pi4j)
                 .id("led")
                 .name("LED Flasher")
                 .address(PIN_LED)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW)
                 .provider("pigpio-digital-output");
-        var led = pi4j.create(ledConfig);
+        DigitalOutput led = pi4j.create(ledConfig);
 
-        var buttonConfig = DigitalInput.newConfigBuilder(pi4j)
+        DigitalInputConfigBuilder buttonConfig = com.pi4j.io.gpio.digital.DigitalInput.newConfigBuilder(pi4j)
                 .id("button")
                 .name("Press button")
                 .address(PIN_BUTTON)
                 .pull(PullResistance.PULL_DOWN)
                 .debounce(3000L)
                 .provider("pigpio-digital-input");
-        var button = pi4j.create(buttonConfig);
+        DigitalInput button = pi4j.create(buttonConfig);
         button.addListener(e -> {
             if (e.state() == DigitalState.LOW) {
                 pressCount++;
@@ -140,8 +140,10 @@ public class MinimalExample {
                 console.println("LED high");
                 led.high();
             }
+
             Thread.sleep(500 / (pressCount + 1));
         }
+
 
         // ------------------------------------------------------------
         // Terminate the Pi4J library
