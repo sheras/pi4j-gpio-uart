@@ -15,7 +15,7 @@ The goal of the example project is to show how to set up a Pi4J Maven / Gradle p
 
 ## WIRING
 
-The application needs a LED connected on BCM 22 and button on BCM 24. 
+The application needs a LED connected on BCM 6 and button on BCM 21. 
 
 ![Breadboard schematics used in this example](assets/led-button_bb.png)
 
