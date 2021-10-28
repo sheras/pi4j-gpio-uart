@@ -46,6 +46,7 @@ public class DigitalInputOutputGPIOmedidor {
 
     private static final int PIN_TRIGGER = 16; // BCM 16 OUTPUT
     private static final int PIN_ECHO = 20; // BCM 20 INPUT
+    private static final int INTERVALO_ENTRE_LECTURAS = 3000;
 
     /**
      * This application uses HC-SR04 to measure distance.
@@ -81,9 +82,8 @@ public class DigitalInputOutputGPIOmedidor {
     public static void main(String[] args) throws Exception {
         // Create Pi4J console wrapper/helper
         // (This is a utility class to abstract some of the boilerplate stdin/stdout code)
-        final Console console = new Console();
+        Console console = new Console();
         int numDistancias = 0;
-        final int INTERVALO_ENTRE_LECTURAS = 3000;
 
         // Print program title/header
         console.title("<-- The Pi4J Project -->", "HC-SR04 Example project");
