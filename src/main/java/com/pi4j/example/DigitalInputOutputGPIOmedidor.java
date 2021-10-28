@@ -37,30 +37,56 @@ import com.pi4j.io.gpio.digital.DigitalState;
 import com.pi4j.io.gpio.digital.PullResistance;
 import com.pi4j.util.Console;
 
+import java.io.IOException;
+
 /**
  * <p>This example fully describes the base usage of Pi4J by providing extensive comments in each step.</p>
  */
-public class DigitalInputOutputGPIO {
+public class DigitalInputOutputGPIOmedidor {
 
-    private static final int PIN_BUTTON = 21; // PIN 40 = BCM 21
-    private static final int PIN_LED = 6; // PIN 31 = BCM 6
-
-    private static int pressCount = 0;
+    private static final int PIN_TRIGGER = 16; // BCM 16 OUTPUT
+    private static final int PIN_ECHO = 20; // BCM 20 INPUT
 
     /**
-     * This application blinks a led and counts the number the button is pressed. The blink speed increases with each
-     * button press, and after 5 presses the application finishes.
+     * This application uses HC-SR04 to measure distance.
      *
-     * @param args an array of {@link java.lang.String} objects.
      * @throws java.lang.Exception if any.
      */
+    public static double leerDistancia(DigitalOutput mTrigger, DigitalInput mEcho, Console console) throws InterruptedException {
+        int hazAlgo;
+        double distancia = 0.0;
+
+        mTrigger.setState(false);
+        Thread.sleep(0, 2000); // 2 mseg
+        mTrigger.setState(true);
+        Thread.sleep(0, 10000); //10 msec
+        mTrigger.setState(false);
+        while (mEcho.state().equals(false)) {
+            hazAlgo = 0;
+            //console.println("Echo state: " + false);
+        }
+        long tiempoIni = System.nanoTime();
+        while (mEcho.state().equals(true)) {
+            hazAlgo = 1;
+            //console.println("Echo state: " + true);
+        }
+
+        //console.println("Echo state, again: " + false);
+        long tiempoFin = System.nanoTime();
+        long anchoPulso = tiempoFin - tiempoIni;
+        distancia = (anchoPulso / 1000.0) / 58.23; //cm
+        return distancia;
+    }
+
     public static void main(String[] args) throws Exception {
         // Create Pi4J console wrapper/helper
         // (This is a utility class to abstract some of the boilerplate stdin/stdout code)
         final Console console = new Console();
+        int numDistancias = 0;
+        final int INTERVALO_ENTRE_LECTURAS = 3000;
 
         // Print program title/header
-        console.title("<-- The Pi4J Project -->", "Minimal Example project");
+        console.title("<-- The Pi4J Project -->", "HC-SR04 Example project");
 
         // ************************************************************
         //
@@ -105,45 +131,36 @@ public class DigitalInputOutputGPIO {
         // Here we will create I/O interfaces for a (GPIO) digital output
         // and input pin. We define the 'provider' to use PiGpio to control
         // the GPIO.
-        DigitalOutputConfigBuilder ledConfig = DigitalOutput.newConfigBuilder(pi4j)
-                .id("led")
-                .name("LED Flasher")
-                .address(PIN_LED)
+        DigitalOutputConfigBuilder trigConfig = DigitalOutput.newConfigBuilder(pi4j)
+                .id("trigger")
+                .name("HC-SR04 Trigger")
+                .address(PIN_TRIGGER)
                 .shutdown(DigitalState.LOW)
                 .initial(DigitalState.LOW)
                 .provider("pigpio-digital-output");
-        DigitalOutput led = pi4j.create(ledConfig);
+        DigitalOutput mTrigger = pi4j.create(trigConfig);
 
-        DigitalInputConfigBuilder buttonConfig = com.pi4j.io.gpio.digital.DigitalInput.newConfigBuilder(pi4j)
-                .id("button")
-                .name("Press button")
-                .address(PIN_BUTTON)
-                .pull(PullResistance.PULL_DOWN)
+        DigitalInputConfigBuilder echoConfig = com.pi4j.io.gpio.digital.DigitalInput.newConfigBuilder(pi4j)
+                .id("echo")
+                .name("HC-SR04 Echo")
+                .address(PIN_ECHO)
                 .debounce(3000L)
                 .provider("pigpio-digital-input");
-        DigitalInput button = pi4j.create(buttonConfig);
-        button.addListener(e -> {
-            if (e.state() == DigitalState.LOW) {
-                pressCount++;
-                console.println("Button was pressed for the " + pressCount + "th time");
+        DigitalInput mEcho = pi4j.create(echoConfig);
+
+        while (numDistancias < 10){
+            try {
+                double distancia  = leerDistancia(mTrigger,mEcho,console);
+                numDistancias++;
+                console.println("LEYENDO Distancia " + numDistancias + ": " + distancia);
+                Thread.sleep(INTERVALO_ENTRE_LECTURAS);
+            } catch (InterruptedException interruptedException) {
+                interruptedException.printStackTrace();
             }
-        });
+        }
 
         // OPTIONAL: print the registry
         PrintInfo.printRegistry(console, pi4j);
-
-        while (pressCount < 5) {
-            if (led.equals(DigitalState.HIGH)) {
-                console.println("LED low");
-                led.low();
-            } else {
-                console.println("LED high");
-                led.high();
-            }
-
-            Thread.sleep(500 / (pressCount + 1));
-        }
-
 
         // ------------------------------------------------------------
         // Terminate the Pi4J library
@@ -158,5 +175,6 @@ public class DigitalInputOutputGPIO {
 
         // Shutdown Pi4J
         pi4j.shutdown();
+
     }
 }

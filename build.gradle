@@ -5,7 +5,7 @@ plugins {
 group = 'com.pi4j'
 version = '0.0.1'
 
-description = """Pi4J :: MINIMAL EXAMPLE :: Sample minimal project"""
+description = """Pi4J :: HC-SR04 EXAMPLE :: Sample project"""
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8'
