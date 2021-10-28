@@ -6,8 +6,7 @@ GitHub Actions:
 ![Maven build](https://github.com/pi4j/pi4j-example-minimal/workflows/Maven/badge.svg)
 ![Gradle build](https://github.com/pi4j/pi4j-example-minimal/workflows/Gradle/badge.svg)
 
-This project contains a minimal example application which uses the Pi4J (V2) library and uses a digital output (LED) 
-and digital input (push button). Full description is available on [the Pi4J website](https://v2.pi4j.com/getting-started/minimal-example-application)
+This project contains a minimal example application which uses the Pi4J (V2) library and uses a HC-SR04 ultrasonic sensor.
 
 ## PROJECT OVERVIEW
 
@@ -15,9 +14,7 @@ The goal of the example project is to show how to set up a Pi4J Maven / Gradle p
 
 ## WIRING
 
-The application needs a LED connected on BCM 6 and button on BCM 21. 
-
-![Breadboard schematics used in this example](assets/led-button_bb.png)
+The application needs a HC-SR04 ultrasonic sensor with trigger port connected to BCM 16 and echo port on BCM 20. 
 
 ## RUNTIME DEPENDENCIES
 
