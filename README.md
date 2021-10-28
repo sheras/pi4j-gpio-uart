@@ -1,5 +1,5 @@
 
- Pi4J V2 :: Java I/O Library for Raspberry Pi :: Minimal example application
+ Pi4J V2 :: Java I/O Library for Raspberry Pi :: The HC-SR04 ultrasonic sensor example application
 ==========================================================================
 
 GitHub Actions: 
