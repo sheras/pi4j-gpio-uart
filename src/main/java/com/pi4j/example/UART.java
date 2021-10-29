@@ -116,7 +116,7 @@ public class UART {
         // OPTIONAL: print the registry
         PrintInfo.printRegistry(console, pi4j);
 
-        // We use a buffered reader to handle the data sent to the serial port
+        // We use a buffered writer to handle the data sent to the serial port
         BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(serial.getOutputStream()));
 
         // Drain the current serial receive buffer of any lingering bytes
@@ -124,17 +124,10 @@ public class UART {
         int available = serial.drain();
         console.println("Available: " + available);
 
-
-        // Start a thread to handle the incoming data from the serial port
-
-        SerialReader serialReader = new SerialReader(console, serial);
-        Thread serialReaderThread = new Thread(serialReader, "SerialReader");
-        serialReaderThread.setDaemon(true);
-        serialReaderThread.start();
-
         while (serial.isOpen()) {
             try {
                 bw.write("H");
+                bw.flush();
                 console.println("Wrote: H");
             } catch (Exception e) {
                 console.println("Error sending data to serial: " + e.getMessage());
@@ -142,6 +135,12 @@ public class UART {
             }
             Thread.sleep(500);
         }
+
+        // Start a thread to handle the incoming data from the serial port
+        SerialReader serialReader = new SerialReader(console, serial);
+        Thread serialReaderThread = new Thread(serialReader, "SerialReader");
+        serialReaderThread.setDaemon(true);
+        serialReaderThread.start();
 
         serialReader.stopReading();
 

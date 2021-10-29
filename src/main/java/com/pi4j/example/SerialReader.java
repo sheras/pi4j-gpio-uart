@@ -28,7 +28,7 @@ public class SerialReader implements Runnable {
         BufferedReader br = new BufferedReader(new InputStreamReader(serial.getInputStream()));
 
         try {
-            // Data from the GPS is recieved in lines
+            // Data from Arduino is recieved in lines
             String line = "";
 
             // Read data until the flag is false
@@ -42,7 +42,6 @@ public class SerialReader implements Runnable {
                         if (b < 32) {
                             // All non-string bytes are handled as line breaks
                             if (!line.isEmpty()) {
-                                // Here we should add code to parse the data to a GPS data object
                                 console.println("Data: '" + line + "'");
                                 line = "";
                             }
