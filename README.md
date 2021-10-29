@@ -6,7 +6,7 @@ GitHub Actions:
 ![Maven build](https://github.com/pi4j/pi4j-example-minimal/workflows/Maven/badge.svg)
 ![Gradle build](https://github.com/pi4j/pi4j-example-minimal/workflows/Gradle/badge.svg)
 
-This project contains a minimal example application which uses the Pi4J (V2) library and uses a HC-SR04 ultrasonic sensor.
+This project contains a minimal example application which uses the Pi4J (V2) library to communicate with a device overal a serial link.
 
 ## PROJECT OVERVIEW
 
