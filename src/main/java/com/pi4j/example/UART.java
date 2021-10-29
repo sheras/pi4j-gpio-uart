@@ -127,7 +127,6 @@ public class UART {
         while (serial.isOpen()) {
             try {
                 bw.write("H");
-                bw.flush();
                 console.println("Wrote: H");
             } catch (Exception e) {
                 console.println("Error sending data to serial: " + e.getMessage());
