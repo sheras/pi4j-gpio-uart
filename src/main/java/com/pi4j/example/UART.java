@@ -35,6 +35,7 @@ import com.pi4j.io.serial.Serial;
 import com.pi4j.io.serial.StopBits;
 import com.pi4j.util.Console;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;
 
@@ -121,29 +122,31 @@ public class UART {
         // Drain the current serial receive buffer of any lingering bytes
         // Returns >= 0 if OK
         int available = serial.drain();
+        console.println("Available: " + available);
 
-        try {
-            if (available >= 0) {
-                bw.write('H');
-            }
-        } catch (Exception e) {
-            console.println("Error sending data to serial: " + e.getMessage());
-            System.out.println(e.getStackTrace());
-        }
 
         // Start a thread to handle the incoming data from the serial port
+
         SerialReader serialReader = new SerialReader(console, serial);
         Thread serialReaderThread = new Thread(serialReader, "SerialReader");
         serialReaderThread.setDaemon(true);
         serialReaderThread.start();
 
         while (serial.isOpen()) {
+            try {
+                bw.write("H");
+                console.println("Wrote: H");
+            } catch (Exception e) {
+                console.println("Error sending data to serial: " + e.getMessage());
+                System.out.println(e.getStackTrace());
+            }
             Thread.sleep(500);
         }
 
         serialReader.stopReading();
 
         console.println("Serial is no longer open");
+
 
         // ------------------------------------------------------------
         // Terminate the Pi4J library
