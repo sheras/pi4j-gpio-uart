@@ -14,7 +14,7 @@ The goal of the example project is to show how to set up a Pi4J Maven / Gradle p
 
 ## WIRING
 
-The application needs a HC-SR04 ultrasonic sensor with trigger port connected to BCM 16 and echo port on BCM 20. 
+The application needs a HC-SR04 ultrasonic sensor with trigger port connected Arduino Trigger Pin 9 and Echo Pin 9; 
 
 ## RUNTIME DEPENDENCIES
 
